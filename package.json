@@ -11,6 +11,8 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
+    "@grpc/grpc-js": "^1.13.4",
+    "@grpc/proto-loader": "^0.7.15",
     "kafkajs": "^2.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"

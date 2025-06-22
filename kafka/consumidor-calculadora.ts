@@ -1,85 +1,45 @@
-import { kafka } from '../configuration';
+import * as grpc from '@grpc/grpc-js';
+import * as protoLoader from '@grpc/proto-loader';
+import path from 'path';
 
-const topics = ['HIDROPONIA01', 'HIDROPONIA02'];
-const groupId = 'hidroponia-calculadora-group';
+const PROTO_PATH = path.join(__dirname, '../proto/hidroponia.proto');
+const pkgDef = protoLoader.loadSync(PROTO_PATH);
+const grpcObj = grpc.loadPackageDefinition(pkgDef) as any;
+const service = grpcObj.hidroponia.HidroponiaService;
 
-interface Leitura {
-  temperatura: number;
-  umidade: number;
-  condutividade: number;
-  timestamp: string;
-  bancada: string;
+function calcularMedia(arr: number[]) {
+  return arr.reduce((a, b) => a + b, 0) / arr.length;
 }
 
-// Dados armazenados em memória por tópico
-const dadosPorTopico: Record<string, Leitura[]> = {};
-
-function calcularMedia(arr: number[]): number {
-  if (arr.length === 0) return 0;
-  const soma = arr.reduce((a, b) => a + b, 0);
-  return soma / arr.length;
+function calcularMediana(arr: number[]) {
+  const sorted = [...arr].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
 }
 
-function calcularMediana(arr: number[]): number {
-  if (arr.length === 0) return 0;
-  const ordenado = [...arr].sort((a, b) => a - b);
-  const meio = Math.floor(ordenado.length / 2);
-  if (ordenado.length % 2 === 0) {
-    return (ordenado[meio - 1] + ordenado[meio]) / 2;
-  } else {
-    return ordenado[meio];
-  }
-}
+const server = new grpc.Server();
 
-async function startConsumerCalculadora() {
-  const consumer = kafka.consumer({ groupId });
+server.addService(service.service, {
+  CalcularEstatisticas: (call: any, callback: any) => {
+    const leituras = call.request.leituras;
+    const temperaturas = leituras.map((l: any) => l.temperatura);
+    const umidades = leituras.map((l: any) => l.umidade);
+    const conds = leituras.map((l: any) => l.condutividade);
+    //console.log('📡 Requisição recebida para cálculo:', call.request);
 
-  await consumer.connect();
+    callback(null, {
+      mediaTemperatura: calcularMedia(temperaturas),
+      medianaTemperatura: calcularMediana(temperaturas),
+      mediaUmidade: calcularMedia(umidades),
+      medianaUmidade: calcularMediana(umidades),
+      mediaCondutividade: calcularMedia(conds),
+      medianaCondutividade: calcularMediana(conds),
+    });
+  },
+});
 
-  for (const topic of topics) {
-    await consumer.subscribe({ topic, fromBeginning: false });
-    dadosPorTopico[topic] = []; // inicializa o array para cada tópico
-  }
 
-  console.log(`🤖 Consumidor Calculadora conectado e escutando: ${topics.join(', ')}`);
-
-  await consumer.run({
-    eachMessage: async ({ topic, message }) => {
-      try {
-        const value = message.value?.toString();
-        if (!value) return;
-
-        const leitura: Leitura = JSON.parse(value);
-
-        // Armazena leitura no array do tópico
-        dadosPorTopico[topic].push(leitura);
-
-      } catch (err) {
-        console.error('Erro ao processar mensagem:', err);
-      }
-    },
-  });
-
-  // A cada 15 segundos imprime as médias e medianas
-  setInterval(() => {
-    for (const topic of topics) {
-      const leituras = dadosPorTopico[topic];
-      if (!leituras || leituras.length === 0) {
-        console.log(`Tópico ${topic}: nenhum dado recebido ainda.`);
-        continue;
-      }
-
-      const temperaturas = leituras.map(l => l.temperatura);
-      const umidades = leituras.map(l => l.umidade);
-      const condutividades = leituras.map(l => l.condutividade);
-
-      console.log(`\n📊 Estatísticas para o tópico ${topic}:`);
-
-      console.log(`- Temperatura: Média = ${calcularMedia(temperaturas).toFixed(2)} °C, Mediana = ${calcularMediana(temperaturas).toFixed(2)} °C`);
-      console.log(`- Umidade: Média = ${calcularMedia(umidades).toFixed(2)} %, Mediana = ${calcularMediana(umidades).toFixed(2)} %`);
-      console.log(`- Condutividade: Média = ${calcularMedia(condutividades).toFixed(2)} mS/cm, Mediana = ${calcularMediana(condutividades).toFixed(2)} mS/cm`);
-    }
-  }, 5000);
-}
-
-startConsumerCalculadora().catch(console.error);
+server.bindAsync('0.0.0.0:50051', grpc.ServerCredentials.createInsecure(), () => {
+  server.start();
+  console.log('🚀 Servidor de cálculo gRPC rodando em localhost:50051');
+});

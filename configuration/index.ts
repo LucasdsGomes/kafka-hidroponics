@@ -1,20 +1,11 @@
-import { Consumer, Kafka, KafkaConfig, Partitioners, Producer } from 'kafkajs';
+import { Kafka, KafkaConfig, Partitioners, Consumer } from 'kafkajs';
 
 const config: KafkaConfig = {
   clientId: 'hidroponia-app',
-  brokers: ['localhost:9092'], // usamos a porta mapeada para a máquina local
+  brokers: ['localhost:9092'],
 };
 
 export const kafka = new Kafka(config);
-
-const producer = kafka.producer({
-  createPartitioner: Partitioners.LegacyPartitioner,
-});
-const consumer: Consumer = kafka.consumer({ groupId: 'hidroponia-group'});
-const consumerB: Consumer = kafka.consumer({ groupId: 'hidroponia-group-B'});
-
-export {
-  producer,
-  consumer,
-  consumerB
-};
+export const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
+export const consumer: Consumer = kafka.consumer({ groupId: 'hidroponia-group' });
+export const consumerB: Consumer = kafka.consumer({ groupId: 'hidroponia-group-B'});

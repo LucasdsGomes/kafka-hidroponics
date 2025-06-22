@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package hidroponia;
+
+service HidroponiaService {
+  rpc CalcularEstatisticas (EstatisticaRequest) returns (EstatisticaResponse);
+}
+
+message Leitura {
+  string bancada = 1;
+  float temperatura = 2;
+  float umidade = 3;
+  float condutividade = 4;
+  string timestamp = 5;
+}
+
+message EstatisticaRequest {
+  string topico = 1;
+  repeated Leitura leituras = 2;
+}
+
+message EstatisticaResponse {
+  float mediaTemperatura = 1;
+  float medianaTemperatura = 2;
+  float mediaUmidade = 3;
+  float medianaUmidade = 4;
+  float mediaCondutividade = 5;
+  float medianaCondutividade = 6;
+}
