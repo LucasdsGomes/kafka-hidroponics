@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Hidroponia</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="floating-particles">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h1><i class="fas fa-seedling"></i> Dashboard Hidroponia</h1>
+      <p>Monitoramento inteligente do seu sistema hidropônico</p>
+    </div>
+
+    <div class="stats-grid">
+      <% estatisticas.forEach((est, index) => { %>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">
+              <i class="fas fa-leaf"></i>
+            </div>
+            <div class="card-title">
+              <h2>Bancada <%= est.topico %></h2>
+              <p>Consumidor: <%= est.consumidor %> <span class="status-badge">Ativo</span></p>
+            </div>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric">
+              <i class="fas fa-thermometer-half metric-icon temp"></i>
+              <div class="metric-label">Temperatura</div>
+              <div class="metric-value"><%= est.mediaTemperatura %> °C</div>
+              <div class="metric-stats">
+                <span>Méd: <%= est.mediaTemperatura %></span>
+                <span>Mediana: <%= est.medianaTemperatura %></span>
+              </div>
+            </div>
+
+            <div class="metric">
+              <i class="fas fa-tint metric-icon humidity"></i>
+              <div class="metric-label">Umidade</div>
+              <div class="metric-value"><%= est.mediaUmidade %> %</div>
+              <div class="metric-stats">
+                <span>Méd: <%= est.mediaUmidade %></span>
+                <span>Mediana: <%= est.medianaUmidade %></span>
+              </div>
+            </div>
+
+            <div class="metric">
+              <i class="fas fa-bolt metric-icon conductivity"></i>
+              <div class="metric-label">Condutividade</div>
+              <div class="metric-value"><%= est.mediaCondutividade %> mS/cm</div>
+              <div class="metric-stats">
+                <span>Méd: <%= est.mediaCondutividade %></span>
+                <span>Mediana: <%= est.medianaCondutividade %></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="data-table">
+            <div class="table-header">
+              <i class="fas fa-chart-line"></i>
+              Histórico de Leituras
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th><i class="fas fa-thermometer-half"></i> Temp</th>
+                    <th><i class="fas fa-tint"></i> Umidade</th>
+                    <th><i class="fas fa-bolt"></i> Condut.</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% est.leituras.forEach(l => { %>
+                    <tr>
+                      <td><%= l.temperatura %> °C</td>
+                      <td><%= l.umidade %> %</td>
+                      <td><%= l.condutividade %> mS/cm</td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+
+  <script>
+    // Adiciona interatividade aos cards
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+      });
+      
+      card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+      });
+    });
+
+    // Animação das métricas
+    document.querySelectorAll('.metric').forEach((metric, index) => {
+      metric.style.animationDelay = `${index * 0.1}s`;
+      metric.classList.add('animate-in');
+    });
+
+    // Efeito de loading suave
+    window.addEventListener('load', () => {
+      document.body.style.opacity = '1';
+      document.body.style.transform = 'translateY(0)';
+    });
+  </script>
+</body>
+</html>
