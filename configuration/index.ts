@@ -8,4 +8,4 @@ const config: KafkaConfig = {
 export const kafka = new Kafka(config);
 export const producer = kafka.producer({ createPartitioner: Partitioners.LegacyPartitioner });
 export const consumer: Consumer = kafka.consumer({ groupId: 'hidroponia-group' });
-export const consumerB: Consumer = kafka.consumer({ groupId: 'hidroponia-group-B'});
+//export const consumerB: Consumer = kafka.consumer({ groupId: 'hidroponia-group-B'});
