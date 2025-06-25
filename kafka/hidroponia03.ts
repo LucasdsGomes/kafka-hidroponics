@@ -17,14 +17,14 @@ function gerarLeitura(): Leitura {
 (async () => {
   const leitura = gerarLeitura();
   const mensagem = {
-    bancada: 'HIDROPONIA01',
+    bancada: 'HIDROPONIA03',
     ...leitura,
   };
 
   await producer.connect();
   await producer.send({
-    topic: 'HIDROPONIA01',
-    messages: [{ key: 'bancada-HIDROPONIA01', value: JSON.stringify(mensagem) }],
+    topic: 'HIDROPONIA03',
+    messages: [{ key: 'bancada-HIDROPONIA03', value: JSON.stringify(mensagem) }],
   });
   await producer.disconnect();
   console.log('✔️ Leitura gerada e enviada');

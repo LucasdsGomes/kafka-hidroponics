@@ -8,9 +8,9 @@ interface Leitura {
 
 function gerarLeitura(): Leitura {
   return {
-    temperatura: +(Math.random() * 30 + 15).toFixed(2),
-    umidade: +(Math.random() * 50 + 30).toFixed(2),
-    condutividade: +(Math.random() * 2 + 1).toFixed(2),
+    temperatura: +(Math.random() * (100 - 10) + 10).toFixed(2),
+    umidade: +(Math.random() * (100 - 10) + 10).toFixed(2),
+    condutividade: +(Math.random() * (100 - 10) + 10).toFixed(2),
   };
 }
 

@@ -1,0 +1,35 @@
+LOGICA K A F K A
+
+
+
+GRPC RUN BANCADA -> RUN DO CLIENTE -> RUN DO CALCULO -> CLIENTE QUE EXIBIA MEDIA E MEDIANA
+
+
+
+RUN BANCADA 01 -> A
+RUN BANCADA 02 -> REGISTRADA NO TOPICO B
+RUN BANCADA 03 -> REGISTRADA TBM NO TOPICO B
+
+CONSUMER 2 ASSINANDO PRODUTO A PEGA SOMENTE BANCADA 1 -> CALCULO MEDIA E MEDIANA -> EXIBIR NO DASHBOARD
+
+CONSUMER 3 ASSINNA  PRODUTO B PEGA BANCADA 2 E 3 -> CALCULO MEDIA E MEDIANA -> EXIBIR NO DASHBOARD
+
+
+-DESACOPLAMENTO TEMPORAL 
+
+POR MEIO DO KAFKA IRÁ OCORRER DA SEGUINTE FORMA, O KAFKA IRA FUNCIONAR POR BASE DE PUBLICAR/ASSINAR 
+CADA BANCADA (PRODUTO) SERA PUBLICADO EM UM TOPICO SELECIONADO
+CADA CLIENTE(CONSUMER) SERA FEITO A ASSINATURA COM UM TOPICO ESCOLHIDO
+
+BANCADA TOPICO A É CONSUMIDO POR CLIENTE QUE ASSINAR O TOPICO A, 
+BANCADA NO TOPICO B NÃO SERÁ CONSUMIDA PELO CLIENTE NO TOPICO A
+
+ESSES TOPICOS SERÃO REGISTRADOS NO KAFKA
+
+--------------------------------------------------------------------------------------------------------------------
+
+Rodar servidor-calculadora.ts primeiro, kafka/cliente.ts segundo, kafka/hidroponiaX.ts terceiro e interface por último
+
+Para compilar o servidor para a interface e exibição dos dados: npx tsc dashboard/server.ts -> server.js (compila o código e atualiza)
+
+Quem chama os métodos é o GRPC e quem faz a comunicação é o Kafka

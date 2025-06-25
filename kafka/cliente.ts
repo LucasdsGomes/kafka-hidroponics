@@ -18,7 +18,7 @@ interface Leitura {
 
 // Agora armazenamos leituras separadas por bancada
 const leiturasPorTopico: Record<string, Leitura[]> = {};
-const topics = ['HIDROPONIA01', 'HIDROPONIA02'];
+const topics = ['HIDROPONIA01', 'HIDROPONIA02', 'HIDROPONIA03'];
 
 async function runConsumer() {
   await consumer.connect();

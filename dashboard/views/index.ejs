@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard Hidroponia</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; background: #f4f4f4; }
+    h1 { color: #2c3e50; }
+    .topico { background: white; padding: 1em; margin-bottom: 1em; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    table { width: 100%; margin-top: 1em; border-collapse: collapse; }
+    th, td { padding: 0.5em; border-bottom: 1px solid #ddd; text-align: left; }
+    th { background: #3498db; color: white; }
+  </style>
+</head>
+<body>
+  <h1>📊 Dashboard de Estatísticas - Hidroponia</h1>
+
+  <% for (let topico in estatisticas) { %>
+    <div class="topico">
+      <h2>🌿 <%= topico %></h2>
+      <table>
+        <tr>
+          <th>Parâmetro</th>
+          <th>Média</th>
+          <th>Mediana</th>
+        </tr>
+        <tr>
+          <td>Temperatura (°C)</td>
+          <td><%= estatisticas[topico].mediaTemperatura.toFixed(2) %></td>
+          <td><%= estatisticas[topico].medianaTemperatura.toFixed(2) %></td>
+        </tr>
+        <tr>
+          <td>Umidade (%)</td>
+          <td><%= estatisticas[topico].mediaUmidade.toFixed(2) %></td>
+          <td><%= estatisticas[topico].medianaUmidade.toFixed(2) %></td>
+        </tr>
+        <tr>
+          <td>Condutividade (mS/cm)</td>
+          <td><%= estatisticas[topico].mediaCondutividade.toFixed(2) %></td>
+          <td><%= estatisticas[topico].medianaCondutividade.toFixed(2) %></td>
+        </tr>
+      </table>
+    </div>
+  <% } %>
+</body>
+</html>
